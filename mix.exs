@@ -15,15 +15,15 @@ defmodule Mailman.Mixfile do
 
   # Configuration for the OTP application
   def application do
-    [ applications: [:ssl, :crypto, :eiconv, :gen_smtp]]
+    [ applications: [:ssl, :crypto, :iconv, :gen_smtp]]
   end
 
   # Returns the list of dependencies in the format:
   # { :foobar, "~> 0.1", git: "https://github.com/elixir-lang/foobar.git" }
   defp deps do
     [
-      { :eiconv, github: "zotonic/eiconv" },
-      { :gen_smtp, ">= 0.9.0" },
+      { :gen_smtp, git: "https://github.com/anagromataf/gen_smtp.git", branch: "develop" },
+      { :iconv, "~> 1.0.0"},
       { :ex_doc, ">= 0.6.0" },
       { :earmark, ">= 0.0.0" }
     ]
