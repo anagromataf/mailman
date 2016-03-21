@@ -4,11 +4,11 @@ defmodule Mailman.Render do
   @doc "Returns a tuple with all data needed for the underlying adapter to send"
   def render(email, composer) do
     compile_parts(email, composer) |>
-      to_tuple(email) |>
+      to_tuple(email, composer) |>
       :mimemail.encode
   end
 
-  def to_tuple(part, _email) when is_tuple(part) do
+  def to_tuple(part, _email, _composer) when is_tuple(part) do
     {
       mime_type_for(part),
       mime_subtype_for(part),
@@ -18,13 +18,13 @@ defmodule Mailman.Render do
     }
   end
 
-  def to_tuple(parts, email) when is_list(parts) do
+  def to_tuple(parts, email, composer) when is_list(parts) do
     {
       mime_type_for(parts),
       mime_subtype_for(parts),
-      headers_for(email),
+      headers_for(email, composer),
       [],
-      Enum.map(parts, &to_tuple(&1, email))
+      Enum.map(parts, &to_tuple(&1, email, composer))
     }
   end
 
@@ -86,11 +86,11 @@ defmodule Mailman.Render do
     attachment.mime_sub_type
   end
 
-  def headers_for(email) do
+  def headers_for(email, composer) do
     [
       { "From", email.from },
       { "To", email.to |> normalize_addresses |> Enum.join(",") },
-      { "Subject", email.subject },
+      { "Subject", compile_part(:subject, email, composer) },
       { "reply-to", email.reply_to },
       { "Cc",  email.cc |> as_list |> normalize_addresses |> Enum.join(", ") |> as_list },
       { "Bcc", email.bcc |> as_list |> normalize_addresses |> Enum.join(", ") |> as_list }

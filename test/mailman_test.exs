@@ -273,8 +273,10 @@ Pictures!
       %Mailman.Context{
           config:   %Mailman.TestConfig{},
           composer: %Mailman.EexComposeConfig{
+            subject_file: true,
             html_file: true,
             text_file: true,
+            subject_file_path: "test/templates/",
             html_file_path: "test/templates/",
             text_file_path: "test/templates/"
           }
@@ -284,7 +286,7 @@ Pictures!
   
   def email_with_template_paths do
     %Mailman.Email{
-      subject: "Hello Mailman!",
+      subject: "email.subject.eex",
       from: "mailman@elixir.com",
       reply_to: "reply@example.com",
       to: [ "ciemniewski.kamil@gmail.com" ],
@@ -307,6 +309,9 @@ Pictures!
                          email_with_template_paths.data)
     assert email.text ==
            EEx.eval_file("test/templates/#{email_with_template_paths.text}",
+                         email_with_template_paths.data)
+    assert email.subject ==
+           EEx.eval_file("test/templates/#{email_with_template_paths.subject}",
                          email_with_template_paths.data)
   end
 end
